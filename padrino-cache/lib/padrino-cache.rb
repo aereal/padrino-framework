@@ -1,7 +1,10 @@
 require 'fileutils'
 require 'padrino-core'
-require 'padrino-helpers'
-FileSet.glob_require('padrino-cache/{helpers}/*.rb', __FILE__)
+begin
+  require "padrino-helpers"
+  FileSet.glob_require('padrino-cache/{helpers}/*.rb', __FILE__)
+rescue LoadError => e
+end
 
 module Padrino
   class << self
@@ -88,9 +91,11 @@ module Padrino
       #
       # @api public
       def registered(app)
-        app.helpers Padrino::Cache::Helpers::CacheStore
-        app.helpers Padrino::Cache::Helpers::Fragment
-        app.helpers Padrino::Cache::Helpers::Page
+        if defined?(Padrino::Cache::Helpers)
+          app.helpers Padrino::Cache::Helpers::CacheStore
+          app.helpers Padrino::Cache::Helpers::Fragment
+          app.helpers Padrino::Cache::Helpers::Page
+        end
         app.set :cache, Padrino::Cache::Store::File.new(Padrino.root('tmp', app.app_name.to_s ,'cache'))
         app.disable :caching
       end
@@ -99,7 +104,7 @@ module Padrino
       # @private
       def padrino_route_added(route, verb, path, args, options, block) # @private
         Padrino::Cache::Helpers::Page.padrino_route_added(route, verb, path, args, options, block)
-      end
+      end if defined?(Padrino::Cache::Helpers)
     end
   end # Cache
 end # Padrino
