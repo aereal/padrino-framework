@@ -18,13 +18,7 @@ RSPEC_CONTROLLER_TEST = (<<-TEST).gsub(/^ {12}/, '') unless defined?(RSPEC_CONTR
 require 'spec_helper'
 
 describe "!NAME!Controller" do
-  before do
-    get "/"
-  end
-
-  it "returns hello world" do
-    last_response.body.should == "Hello World"
-  end
+  pending
 end
 TEST
 
